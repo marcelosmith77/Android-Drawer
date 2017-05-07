@@ -68,7 +68,7 @@ public abstract class AbstractBaseDrawerFragment extends Fragment {
 
     /**
      * Checks activity signature
-     * @param context
+     * @param context - The activity context
      */
     @Override
     public void onAttach(Context context) {

@@ -8,6 +8,7 @@ public interface IActivityLeftDrawerHandler {
     /**
      * Left drawer item selected event listener (START SIDE)
      * @param item - The selected item
+     * @return True - if item were selected, otherwise returns false.
      */
     boolean onLeftNavigationItemSelected(MenuItem item);
 

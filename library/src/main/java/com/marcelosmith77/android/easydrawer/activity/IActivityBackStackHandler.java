@@ -1,7 +1,5 @@
 package com.marcelosmith77.android.easydrawer.activity;
 
-import android.support.v4.app.Fragment;
-
 import com.marcelosmith77.android.easydrawer.fragment.IHomeFragment;
 
 /**
@@ -15,6 +13,7 @@ public interface IActivityBackStackHandler {
     /**
      * Home fragment class type
      * Which one you wanna use for the first shown fragment
+     * @return The home fragment class type
      */
     Class<? extends IHomeFragment>  getHomeFragmentClass();
 

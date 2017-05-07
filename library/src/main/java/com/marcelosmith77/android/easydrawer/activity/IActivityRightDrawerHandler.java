@@ -9,6 +9,7 @@ public interface IActivityRightDrawerHandler {
      * Right drawer item selected event listener (END SIDE)
      *
      * @param item - The selected item
+     * @return True - if item were selected, otherwise returns false.
      */
     boolean onRightNavigationItemSelected(MenuItem item);
 
