@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.marcelosmith77.android.easydrawer.R;
 import com.marcelosmith77.android.easydrawer.fragment.IFragmentBackHandler;
 import com.marcelosmith77.android.easydrawer.fragment.IFragmentRightDrawerHandler;
 import com.marcelosmith77.android.easydrawer.fragment.IHomeFragment;
@@ -48,7 +48,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
             try {
 
                 BaseDrawerParts parts = getBaseDrawerParts();
-                setupUI(parts.toolbar, parts.drawerLayout, parts.leftNavigationView, parts.rightNavigationViews, parts.fragmentContainerId);
+                setupUI(parts.toolbar, parts.drawerLayout, parts.leftNavigationView, parts.rightNavigationViews, parts.fragmentContainerId, parts.openDrawerContentDescRes, parts.closeDrawerContentDescRes);
 
             } finally {
                 drawerInitialized = true;
@@ -86,14 +86,18 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
 
     /**
      * Setup drawer events, like listeners.
-     *
      * @param toolbar - App toolbar
      * @param drawerLayout - Left drawer
      * @param leftNavigationView - Left navigation view (like main activity)
      * @param rightNavigationViews - Right navigation views (Used by fragment or activities)
      * @param fragmentContainerId - main container id.
+     * @param openDrawerContentDescRes  A String resource to describe the "open drawer" action
+     *                                  for accessibility
+     * @param closeDrawerContentDescRes A String resource to describe the "close drawer" action
+     *                                  for accessibility
+
      */
-    private void setupUI(@NonNull Toolbar toolbar, @NonNull final DrawerLayout drawerLayout, final NavigationView leftNavigationView, NavigationView[] rightNavigationViews,  @IdRes int fragmentContainerId) {
+    private void setupUI(@NonNull Toolbar toolbar, @NonNull final DrawerLayout drawerLayout, final NavigationView leftNavigationView, NavigationView[] rightNavigationViews, @IdRes int fragmentContainerId, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
 
         setSupportActionBar(toolbar);
 
@@ -134,7 +138,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
 
         if (drawerLayout != null) {
 
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes) {
                 @Override
                 public void onDrawerOpened(View drawerView) {
 
@@ -284,7 +288,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
                 // Give him 2 seconds to touch again, otherwise resets the flag.
 
                 this.doubleBackToExitPressedOnce = true;
-                Toast.makeText(this, R.string.touch_again_to_exit, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getBaseDrawerParts().touchAgaingDescRes, Toast.LENGTH_SHORT).show();
 
                 new Handler().postDelayed(new Runnable() {
 
