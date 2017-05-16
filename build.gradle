@@ -5,7 +5,7 @@ buildscript {
     ext {
         setup = [compileSdk: 25,
                  buildTools: "25.0.2",
-                 minSdkVersion    : 15,
+                 minSdkVersion    : 14,
                  targetSdkVersion : 25]
 
         versions = [supportLib: "25.3.1"]
@@ -17,7 +17,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.android.tools.build:gradle:2.3.2'
     }
 }
 
