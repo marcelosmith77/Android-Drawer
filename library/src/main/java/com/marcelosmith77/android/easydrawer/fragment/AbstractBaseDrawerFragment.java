@@ -1,6 +1,8 @@
 package com.marcelosmith77.android.easydrawer.fragment;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 
 import com.marcelosmith77.android.easydrawer.activity.AbstractBaseDrawerActivity;
@@ -37,6 +39,22 @@ public abstract class AbstractBaseDrawerFragment extends Fragment {
      */
     protected void showFrament(Fragment fragment, boolean addToStack) {
        showFrament(fragment, fragment.getClass().getSimpleName(), addToStack);
+    }
+
+    /**
+     * Shows fragment
+     *
+     * @param fragment - The fragment
+     * @param addToStack - Add to stack?
+     * @param clearStack - Clear stack?
+     * @param key - parameter key
+     * @param parcelable - fragment parameter
+     */
+    public void showFrament(Fragment fragment, boolean addToStack, boolean clearStack, String key, Parcelable parcelable) {
+        Bundle args = new Bundle();
+        args.putParcelable(key, parcelable);
+
+        ((AbstractBaseDrawerActivity) getActivity()).showFrament(fragment, fragment.getClass().getSimpleName(), addToStack, clearStack, args);
     }
 
     /**
