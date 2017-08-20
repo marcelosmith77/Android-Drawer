@@ -4,8 +4,10 @@ package com.marcelosmith77.android.easydrawer.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -36,6 +38,9 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
 
     // Left drawer that is in use on your main activity
     private DrawerLayout drawerLayout;
+
+    // Listener the toggles drawer visible
+    private ActionBarDrawerToggle drawerToggle;
 
     // Container id, where fragments are replaced
     private int fragmentContainerId;
@@ -97,7 +102,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
      *                                  for accessibility
 
      */
-    private void setupUI(@NonNull Toolbar toolbar, @NonNull final DrawerLayout drawerLayout, final NavigationView leftNavigationView, NavigationView[] rightNavigationViews, @IdRes int fragmentContainerId, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
+    private void setupUI(@NonNull final Toolbar toolbar, @NonNull final DrawerLayout drawerLayout, final NavigationView leftNavigationView, NavigationView[] rightNavigationViews, @IdRes int fragmentContainerId, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
 
         setSupportActionBar(toolbar);
 
@@ -138,7 +143,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
 
         if (drawerLayout != null) {
 
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes) {
+            drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes) {
                 @Override
                 public void onDrawerOpened(View drawerView) {
 
@@ -159,13 +164,46 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
                 }
             };
 
-            drawerLayout.addDrawerListener(toggle);
+            drawerLayout.addDrawerListener(drawerToggle);
 
             // Locks END side, that will be enabled by fragments that uses right drawers
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
 
-            toggle.syncState();
+            drawerToggle.setDrawerIndicatorEnabled(true);
+            drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+
+                    if (backStackCount > 0) {
+                        onBackPressed();
+                    }
+                }
+            });
+
+            drawerToggle.syncState();
         }
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+
+                    if (backStackCount > 0) {
+                        onBackPressed();
+                    } else {
+                        if (drawerToggle.isDrawerIndicatorEnabled()) {
+                            int drawerLockMode = drawerLayout.getDrawerLockMode(GravityCompat.START);
+
+                            if (drawerLayout.isDrawerVisible(GravityCompat.START) && (drawerLockMode != DrawerLayout.LOCK_MODE_LOCKED_OPEN)) {
+                                drawerLayout.closeDrawer(GravityCompat.START);
+                            } else if (drawerLockMode != DrawerLayout.LOCK_MODE_LOCKED_CLOSED) {
+                                drawerLayout.openDrawer(GravityCompat.START);
+                            }
+                        }
+                    }
+                }
+        });
     }
 
     /**
@@ -264,6 +302,10 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
                 // there is fragments on the stack?
                 if (backStackCount == 0) {
                     showHomeFragment(); // Stack is empty, show home fragment
+                    getSupportActionBar().setDisplayShowHomeEnabled(true);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                    drawerToggle.setDrawerIndicatorEnabled(true);
+                    drawerToggle.syncState();
                 }
 
                 // Current fragment does have drawer? Unlock It, allowing END SIDE
@@ -440,8 +482,11 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
             ft.replace(fragmentContainerId, f);
 
             // Home fragment must not pushed to stack
-            if (!isHomeFragment && addToStack)
+            if (!isHomeFragment && addToStack) {
                 ft.addToBackStack(name);
+                getSupportActionBar().setDisplayShowHomeEnabled(false);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
 
             ft.commit();
 
