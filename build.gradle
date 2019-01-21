@@ -3,21 +3,22 @@
 buildscript {
 
     ext {
-        setup = [compileSdk: 25,
-                 buildTools: "25.0.2",
+        setup = [compileSdk: 26,
+                 buildTools: "27.0.3",
                  minSdkVersion    : 14,
-                 targetSdkVersion : 25]
+                 targetSdkVersion : 26]
 
-        versions = [supportLib: "25.3.1"]
+        versions = [supportLib: "26.1.0"]
     }
 
     repositories {
         jcenter()
         mavenCentral()
+        google()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.1.1'
     }
 }
 
@@ -26,6 +27,7 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        google()
     }
 }
 

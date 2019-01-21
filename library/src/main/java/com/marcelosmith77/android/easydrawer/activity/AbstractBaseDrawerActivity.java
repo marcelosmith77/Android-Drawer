@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -68,19 +67,11 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
      */
     private void showHomeFragment() {
 
-        Fragment f;
+        Fragment f = getHomeFragment();
 
-        try {
-            f = (Fragment) getHomeFragmentClass().newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException("Fragment HOME cannot be instantiated. Make sure that extends android.support.v4.app.Fragment");
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Fragment HOME cannot be instantiated. Make sure that have an empty constructor.");
-        }
-
-        if (f != null)
+        if (f != null) {
             showFrament(f);
-
+        }
     }
 
     /**
@@ -530,5 +521,12 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
 
+        if (getCurrentFragment() != null) {
+            getCurrentFragment().onSaveInstanceState(outState);
+        }
+    }
 }

@@ -8,8 +8,8 @@ android {
         applicationId "com.marcelosmith77.android.easydrawer"
         minSdkVersion setup.minSdkVersion
         targetSdkVersion setup.targetSdkVersion
-        versionCode 150010000
-        versionName "1.00.00"
+        versionCode 150010006
+        versionName "1.00.06"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -21,12 +21,12 @@ android {
 }
 
 dependencies {
-    compile project(':library')
-    compile "com.android.support:appcompat-v7:${versions.supportLib}"
+    implementation project(':library')
+    implementation "com.android.support:appcompat-v7:${versions.supportLib}"
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }

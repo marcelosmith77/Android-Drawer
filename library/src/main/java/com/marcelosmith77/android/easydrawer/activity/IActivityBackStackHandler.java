@@ -11,11 +11,12 @@ public interface IActivityBackStackHandler {
 
 
     /**
-     * Home fragment class type
-     * Which one you wanna use for the first shown fragment
-     * @return The home fragment class type
+     * Home fragment
+     * Which fragment you wanna use for the first shown fragment
+     * @param <T> Fragment Type
+     * @return The home fragment object
      */
-    Class<? extends IHomeFragment>  getHomeFragmentClass();
+    <T extends IHomeFragment> T getHomeFragment();
 
     /**
      * Allows you to define the behavior when the app is going to close / finish
