@@ -4,9 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
 import com.marcelosmith77.android.easydrawer.activity.AbstractBaseDrawerActivity;
 import com.marcelosmith77.android.easydrawer.utils.Utils;
+
+import java.util.Optional;
 
 public abstract class AbstractBaseDrawerFragment extends Fragment {
 
@@ -28,7 +31,11 @@ public abstract class AbstractBaseDrawerFragment extends Fragment {
      */
     protected void showFrament(Fragment fragment, String name) {
 
-        ((AbstractBaseDrawerActivity) getActivity()).showFrament(fragment, name, false, false);
+        FragmentActivity activity = getActivity();
+
+        if (activity != null && !activity.isFinishing()) {
+            ((AbstractBaseDrawerActivity) activity).showFrament(fragment, name, false, false);
+        }
     }
 
     /**
@@ -51,10 +58,15 @@ public abstract class AbstractBaseDrawerFragment extends Fragment {
      * @param parcelable - fragment parameter
      */
     public void showFrament(Fragment fragment, boolean addToStack, boolean clearStack, String key, Parcelable parcelable) {
-        Bundle args = new Bundle();
-        args.putParcelable(key, parcelable);
 
-        ((AbstractBaseDrawerActivity) getActivity()).showFrament(fragment, fragment.getClass().getSimpleName(), addToStack, clearStack, args);
+        FragmentActivity activity = getActivity();
+
+        if (activity != null && !activity.isFinishing()) {
+            Bundle args = new Bundle();
+            args.putParcelable(key, parcelable);
+
+            ((AbstractBaseDrawerActivity) activity).showFrament(fragment, fragment.getClass().getSimpleName(), addToStack, clearStack, args);
+        }
     }
 
     /**
@@ -65,7 +77,11 @@ public abstract class AbstractBaseDrawerFragment extends Fragment {
      * @param addToStack - Add to stack?
      */
     protected void showFrament(Fragment fragment, String name, boolean addToStack) {
-        ((AbstractBaseDrawerActivity) getActivity()).showFrament(fragment, name, addToStack, false);
+        FragmentActivity activity = getActivity();
+
+        if (activity != null && !activity.isFinishing()) {
+            ((AbstractBaseDrawerActivity) activity).showFrament(fragment, name, addToStack, false);
+        }
     }
 
     /**
@@ -73,15 +89,18 @@ public abstract class AbstractBaseDrawerFragment extends Fragment {
 '    */
     protected void back() {
 
-        if (getActivity() != null)
-            getActivity().onBackPressed(); // see AbstractBaseDrawerActivity
+        FragmentActivity activity = getActivity();
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Utils.hideKeyboard(getActivity());
-            }
-        });
+        if (activity != null && !activity.isFinishing()) {
+            activity.onBackPressed(); // see AbstractBaseDrawerActivity
+
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.hideKeyboard(getActivity());
+                }
+            });
+        }
     }
 
     /**
