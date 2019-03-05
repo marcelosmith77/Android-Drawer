@@ -9,8 +9,6 @@ import android.support.v4.app.FragmentActivity;
 import com.marcelosmith77.android.easydrawer.activity.AbstractBaseDrawerActivity;
 import com.marcelosmith77.android.easydrawer.utils.Utils;
 
-import java.util.Optional;
-
 public abstract class AbstractBaseDrawerFragment extends Fragment {
 
     /**
@@ -65,6 +63,23 @@ public abstract class AbstractBaseDrawerFragment extends Fragment {
             Bundle args = new Bundle();
             args.putParcelable(key, parcelable);
 
+            ((AbstractBaseDrawerActivity) activity).showFrament(fragment, fragment.getClass().getSimpleName(), addToStack, clearStack, args);
+        }
+    }
+
+    /**
+     * Shows fragment
+     *
+     * @param fragment - The fragment
+     * @param addToStack - Add to stack?
+     * @param clearStack - Clear stack?
+     * @param args - bundle of arguments
+     */
+    public void showFrament(Fragment fragment, boolean addToStack, boolean clearStack, Bundle args) {
+
+        FragmentActivity activity = getActivity();
+
+        if (activity != null && !activity.isFinishing()) {
             ((AbstractBaseDrawerActivity) activity).showFrament(fragment, fragment.getClass().getSimpleName(), addToStack, clearStack, args);
         }
     }
