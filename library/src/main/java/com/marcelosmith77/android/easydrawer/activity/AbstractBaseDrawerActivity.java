@@ -8,6 +8,7 @@ import android.os.PersistableBundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,7 +29,7 @@ import com.marcelosmith77.android.easydrawer.fragment.IHomeFragment;
 /**
  * The class controls the drawer behavior.
  */
-public abstract class AbstractBaseDrawerActivity extends AppCompatActivity implements IActivityBackStackHandler, IActivityLeftDrawerHandler, IActivityRightDrawerHandler {
+public abstract class AbstractBaseDrawerActivity extends AppCompatActivity implements IActivityBackStackHandler, IActivityLeftDrawerHandler, IActivityRightDrawerHandler, IActivityBottomNavigationHandler {
 
     // Controls when user did touch once and ask him to touch again to exit from the app
     private boolean doubleBackToExitPressedOnce = false;
@@ -50,10 +51,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
 
         if (!drawerInitialized) {
             try {
-
-                BaseDrawerParts parts = getBaseDrawerParts();
-                setupUI(parts.toolbar, parts.drawerLayout, parts.leftNavigationView, parts.rightNavigationViews, parts.fragmentContainerId, parts.openDrawerContentDescRes, parts.closeDrawerContentDescRes);
-
+                setupUI();
             } finally {
                 drawerInitialized = true;
 
@@ -81,28 +79,20 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
     protected abstract BaseDrawerParts getBaseDrawerParts();
 
     /**
-     * Setup drawer events, like listeners.
-     * @param toolbar - App toolbar
-     * @param drawerLayout - Left drawer
-     * @param leftNavigationView - Left navigation view (like main activity)
-     * @param rightNavigationViews - Right navigation views (Used by fragment or activities)
-     * @param fragmentContainerId - main container id.
-     * @param openDrawerContentDescRes  A String resource to describe the "open drawer" action
-     *                                  for accessibility
-     * @param closeDrawerContentDescRes A String resource to describe the "close drawer" action
-     *                                  for accessibility
-
+     * Setup drawer events
      */
-    private void setupUI(@NonNull final Toolbar toolbar, @NonNull final DrawerLayout drawerLayout, final NavigationView leftNavigationView, NavigationView[] rightNavigationViews, @IdRes int fragmentContainerId, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
+    private void setupUI() {
 
-        setSupportActionBar(toolbar);
+        final BaseDrawerParts parts = getBaseDrawerParts();
 
-        this.drawerLayout = drawerLayout;
-        this.fragmentContainerId = fragmentContainerId;
+        setSupportActionBar(parts.toolbar);
+
+        this.drawerLayout = parts.drawerLayout;
+        this.fragmentContainerId = parts.fragmentContainerId;
 
         // Setup Navigation item listener (START SIDE)
-        if (leftNavigationView != null) {
-            leftNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        if (parts.leftNavigationView != null) {
+            parts.leftNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     boolean result = onLeftNavigationItemSelected(item);
@@ -118,8 +108,8 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
         }
 
         // Setup Navigation item listener (END SIDE)
-        if (rightNavigationViews != null) {
-            for (NavigationView rightView : rightNavigationViews) {
+        if (parts.rightNavigationViews != null) {
+            for (NavigationView rightView : parts.rightNavigationViews) {
                 rightView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -134,11 +124,11 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
 
         if (drawerLayout != null) {
 
-            drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes) {
+            drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, parts.toolbar, parts.openDrawerContentDescRes, parts.closeDrawerContentDescRes) {
                 @Override
                 public void onDrawerOpened(View drawerView) {
 
-                    if (drawerView.getId() == leftNavigationView.getId()) {
+                    if (drawerView.getId() == parts.leftNavigationView.getId()) {
                         onLeftDrawerOpened(drawerView);
                     } else {
                         onRightDrawerOpened(drawerView);
@@ -147,7 +137,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
 
                 @Override
                 public void onDrawerClosed(View drawerView) {
-                    if (drawerView.getId() == leftNavigationView.getId()) {
+                    if (drawerView.getId() == parts.leftNavigationView.getId()) {
                         onLeftDrawerClosed(drawerView);
                     } else {
                         onRightDrawerClosed(drawerView);
@@ -175,7 +165,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
             drawerToggle.syncState();
         }
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        parts.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                     int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
@@ -195,6 +185,22 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
                     }
                 }
         });
+
+        if (parts.bottomNavigationView != null) {
+            parts.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    return onBottomNavigationItemSelected(item);
+                }
+            });
+
+            parts.bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
+                @Override
+                public void onNavigationItemReselected(@NonNull MenuItem item) {
+                    onBottomNavigationItemReselected(item);
+                }
+            });
+        }
     }
 
     /**
@@ -286,6 +292,10 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
                     return;
                 }
 
+                if (getSupportFragmentManager().isDestroyed()) {
+                    return;
+                }
+
                 getSupportFragmentManager().executePendingTransactions();
 
                 backStackCount = getSupportFragmentManager().getBackStackEntryCount();
@@ -332,6 +342,25 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
                 }, 2000);
             }
         }
+    }
+
+    /**
+     * Bottom navigation item selected
+     *
+     * @param item - The selected item
+     */
+    @Override
+    public boolean onBottomNavigationItemSelected(MenuItem item) {
+        return true;
+    }
+
+    /**
+     * Bottom navigation item re-selected
+     *
+     * @param item - The RE-selected item
+     */
+    @Override
+    public void onBottomNavigationItemReselected(MenuItem item) {
     }
 
     /**
