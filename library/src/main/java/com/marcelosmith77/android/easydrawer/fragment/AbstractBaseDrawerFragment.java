@@ -3,6 +3,7 @@ package com.marcelosmith77.android.easydrawer.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
@@ -96,6 +97,18 @@ public abstract class AbstractBaseDrawerFragment extends Fragment {
 
         if (activity != null && !activity.isFinishing()) {
             ((AbstractBaseDrawerActivity) activity).showFrament(fragment, name, addToStack, false);
+        }
+    }
+
+    protected void fireBottomNavigation(@IdRes int menuItemId) {
+        fireBottomNavigation(menuItemId, null);
+    }
+
+    protected void fireBottomNavigation(@IdRes int menuItemId, Bundle args) {
+        FragmentActivity activity = getActivity();
+
+        if (activity != null && !activity.isFinishing()) {
+            ((AbstractBaseDrawerActivity) activity).fireBottomNavigation(menuItemId, null);
         }
     }
 

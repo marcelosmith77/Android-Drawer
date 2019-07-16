@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -38,6 +36,9 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
 
     // Left drawer that is in use on your main activity
     private DrawerLayout drawerLayout;
+
+    // Bottom navigation view
+    private BottomNavigationView bottomNavigationView;
 
     // Listener the toggles drawer visible
     private ActionBarDrawerToggle drawerToggle;
@@ -88,6 +89,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
         setSupportActionBar(parts.toolbar);
 
         this.drawerLayout = parts.drawerLayout;
+        this.bottomNavigationView = parts.bottomNavigationView;
         this.fragmentContainerId = parts.fragmentContainerId;
 
         // Setup Navigation item listener (START SIDE)
@@ -351,7 +353,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
      */
     @Override
     public boolean onBottomNavigationItemSelected(MenuItem item) {
-        return true;
+        return onBottomNavigationItemSelected(item, null);
     }
 
     /**
@@ -361,6 +363,52 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
      */
     @Override
     public void onBottomNavigationItemReselected(MenuItem item) {
+        onBottomNavigationItemReselected(item, null);
+    }
+
+    /**
+     * Bottom navigation item selected
+     *
+     * @param item - The selected item
+     */
+    @Override
+    public boolean onBottomNavigationItemSelected(MenuItem item, Bundle args) {
+        return true;
+    }
+
+    /**
+     * Bottom navigation item re-selected
+     *
+     * @param item - The RE-selected item
+     */
+    @Override
+    public void onBottomNavigationItemReselected(MenuItem item, Bundle args) {
+    }
+
+    /**
+     * Aciona programaticamente um menu de navegação inferior
+     * @param menuItemId
+     */
+    public void fireBottomNavigation(@IdRes int menuItemId) {
+
+        fireBottomNavigation(menuItemId, null);
+    }
+
+    /**
+     * Aciona programaticamente um menu de navegação inferior
+     * @param menuItemId
+     */
+    public void fireBottomNavigation(@IdRes int menuItemId, Bundle args) {
+
+        if (bottomNavigationView != null) {
+            MenuItem menuItem = bottomNavigationView.getMenu().findItem(menuItemId);
+
+            if (menuItem != null) {
+                if (onBottomNavigationItemSelected(menuItem)) {
+                    bottomNavigationView.setSelectedItemId(menuItemId);
+                }
+            }
+        }
     }
 
     /**
