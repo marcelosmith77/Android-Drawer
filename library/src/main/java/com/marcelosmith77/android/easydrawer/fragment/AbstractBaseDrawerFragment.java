@@ -108,7 +108,7 @@ public abstract class AbstractBaseDrawerFragment extends Fragment {
         FragmentActivity activity = getActivity();
 
         if (activity != null && !activity.isFinishing()) {
-            ((AbstractBaseDrawerActivity) activity).fireBottomNavigation(menuItemId, null);
+            ((AbstractBaseDrawerActivity) activity).fireBottomNavigation(menuItemId, args);
         }
     }
 
