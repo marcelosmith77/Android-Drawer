@@ -404,8 +404,8 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
             MenuItem menuItem = bottomNavigationView.getMenu().findItem(menuItemId);
 
             if (menuItem != null) {
-                if (onBottomNavigationItemSelected(menuItem)) {
-                    bottomNavigationView.setSelectedItemId(menuItemId);
+                if (onBottomNavigationItemSelected(menuItem, args)) {
+                    menuItem.setChecked(true);
                 }
             }
         }
