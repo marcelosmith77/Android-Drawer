@@ -1,5 +1,7 @@
 package com.marcelosmith77.android.easydrawer.activity;
 
+import android.support.annotation.IdRes;
+
 import com.marcelosmith77.android.easydrawer.fragment.IHomeFragment;
 
 /**
@@ -17,6 +19,12 @@ public interface IActivityBackStackHandler {
      * @return The home fragment object
      */
     <T extends IHomeFragment> T getHomeFragment();
+
+    /**
+     * Id the identifies the menu home inside drawer
+     * @return
+     */
+    @IdRes int getHomeMenuId();
 
     /**
      * Allows you to define the behavior when the app is going to close / finish

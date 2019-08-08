@@ -1,9 +1,17 @@
 package com.marcelosmith77.android.easydrawer.activity;
 
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.view.MenuItem;
 
 public interface IActivityBottomNavigationHandler {
+
+    /**
+     * Id the identifies the menu home inside bottom navigation view
+     * @return
+     */
+    @IdRes
+    int getBottomHomeMenuId();
 
     /**
      * Bottom navigation item selected event listener

@@ -37,6 +37,9 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
     // Left drawer that is in use on your main activity
     private DrawerLayout drawerLayout;
 
+    // left navigation view
+    private NavigationView leftNavigationView;
+
     // Bottom navigation view
     private BottomNavigationView bottomNavigationView;
 
@@ -66,10 +69,16 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
      */
     private void showHomeFragment() {
 
-        Fragment f = getHomeFragment();
+        // There is bottom navigation home menu, fires that
+        if (getBottomHomeMenuId() != -1) {
+            fireBottomNavigation(getBottomHomeMenuId());
+        } else {
+            Fragment f = getHomeFragment();
 
-        if (f != null) {
-            showFrament(f);
+            if (f != null) {
+                showFrament(f);
+                maybeCheckHomeLeftNavigation();
+            }
         }
     }
 
@@ -89,6 +98,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
         setSupportActionBar(parts.toolbar);
 
         this.drawerLayout = parts.drawerLayout;
+        this.leftNavigationView = parts.leftNavigationView;
         this.bottomNavigationView = parts.bottomNavigationView;
         this.fragmentContainerId = parts.fragmentContainerId;
 
@@ -305,10 +315,7 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
                 // there is fragments on the stack?
                 if (backStackCount == 0) {
                     showHomeFragment(); // Stack is empty, show home fragment
-                    getSupportActionBar().setDisplayShowHomeEnabled(true);
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                    drawerToggle.setDrawerIndicatorEnabled(true);
-                    drawerToggle.syncState();
+                    resetDrawerIndicators();
                 }
 
                 // Current fragment does have drawer? Unlock It, allowing END SIDE
@@ -349,30 +356,37 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
     /**
      * Bottom navigation item selected
      *
-     * @param item - The selected item
+     * @param menuItem - The selected item
      */
     @Override
-    public boolean onBottomNavigationItemSelected(MenuItem item) {
-        return onBottomNavigationItemSelected(item, null);
+    public boolean onBottomNavigationItemSelected(MenuItem menuItem) {
+        return onBottomNavigationItemSelected(menuItem, null);
     }
 
     /**
      * Bottom navigation item re-selected
      *
-     * @param item - The RE-selected item
+     * @param menuItem - The RE-selected item
      */
     @Override
-    public void onBottomNavigationItemReselected(MenuItem item) {
-        onBottomNavigationItemReselected(item, null);
+    public void onBottomNavigationItemReselected(MenuItem menuItem) {
+        onBottomNavigationItemReselected(menuItem, null);
     }
 
     /**
      * Bottom navigation item selected
      *
-     * @param item - The selected item
+     * @param menuItem - The selected item
      */
     @Override
-    public boolean onBottomNavigationItemSelected(MenuItem item, Bundle args) {
+    public boolean onBottomNavigationItemSelected(MenuItem menuItem, Bundle args) {
+
+        if (menuItem.getItemId() == getBottomHomeMenuId()) {
+            // home fired, reset drawer indicators
+            resetDrawerIndicators();
+            maybeCheckHomeLeftNavigation();
+        }
+
         return true;
     }
 
@@ -404,8 +418,15 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
             MenuItem menuItem = bottomNavigationView.getMenu().findItem(menuItemId);
 
             if (menuItem != null) {
+
                 if (onBottomNavigationItemSelected(menuItem, args)) {
                     menuItem.setChecked(true);
+
+                    if (menuItem.getItemId() == getBottomHomeMenuId()) {
+                        // home fired, reset drawer indicators
+                        resetDrawerIndicators();
+                        maybeCheckHomeLeftNavigation();
+                    }
                 }
             }
         }
@@ -605,5 +626,41 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
         if (getCurrentFragment() != null) {
             getCurrentFragment().onSaveInstanceState(outState);
         }
+    }
+
+    /**
+     * Show hamburguer icon
+     */
+    private void resetDrawerIndicators() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }
+
+        if (drawerToggle != null) {
+            drawerToggle.setDrawerIndicatorEnabled(true);
+            drawerToggle.syncState();
+        }
+    }
+
+    private void maybeCheckHomeLeftNavigation() {
+
+        if (getHomeMenuId() != -1) {
+
+            // set home menu item selected inside drawer
+            if (leftNavigationView != null) {
+                leftNavigationView.setCheckedItem(getHomeMenuId());
+            }
+        }
+    }
+
+    @Override
+    public int getBottomHomeMenuId() {
+        return -1;
+    }
+
+    @Override
+    public int getHomeMenuId() {
+        return -1;
     }
 }
