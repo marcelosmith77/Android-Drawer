@@ -40,6 +40,9 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
     // left navigation view
     private NavigationView leftNavigationView;
 
+    // right navigation view
+    private NavigationView rightNavigationView;
+
     // Bottom navigation view
     private BottomNavigationView bottomNavigationView;
 
@@ -662,5 +665,32 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
     @Override
     public int getHomeMenuId() {
         return -1;
+    }
+
+    /**
+     * Closes left navigation view
+     */
+    public void closeLeftDrawer() {
+        if (this.drawerLayout != null)
+            this.drawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    /**
+     * Closes right navigation view
+     */
+    public void closeRightDrawer() {
+        if (this.drawerLayout != null)
+            this.drawerLayout.closeDrawer(GravityCompat.END);
+    }
+
+    /**
+     * Closes left navigation view
+     * @para defaultCheckedItem - navigation view item to be checked
+     */
+    public void closeLeftDrawer(@IdRes int defaultCheckedItem) {
+        closeLeftDrawer();
+
+        if (this.leftNavigationView != null)
+            this.leftNavigationView.setCheckedItem(defaultCheckedItem);
     }
 }
