@@ -3,9 +3,9 @@ package com.marcelosmith77.android.easydrawer.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.IdRes;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import androidx.annotation.IdRes;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.marcelosmith77.android.easydrawer.activity.AbstractBaseDrawerActivity;
 import com.marcelosmith77.android.easydrawer.utils.Utils;

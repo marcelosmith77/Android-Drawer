@@ -1,7 +1,7 @@
 package com.marcelosmith77.android.easydrawer.activity;
 
 import android.os.Bundle;
-import android.support.annotation.IdRes;
+import androidx.annotation.IdRes;
 import android.view.MenuItem;
 
 public interface IActivityBottomNavigationHandler {

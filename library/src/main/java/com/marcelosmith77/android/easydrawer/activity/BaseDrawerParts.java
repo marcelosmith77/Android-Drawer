@@ -1,11 +1,11 @@
 package com.marcelosmith77.android.easydrawer.activity;
 
-import android.support.annotation.IdRes;
-import android.support.annotation.StringRes;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.IdRes;
+import androidx.annotation.StringRes;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.widget.Toolbar;
 
 public class BaseDrawerParts {
 

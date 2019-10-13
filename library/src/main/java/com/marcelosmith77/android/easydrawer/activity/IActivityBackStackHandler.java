@@ -1,6 +1,6 @@
 package com.marcelosmith77.android.easydrawer.activity;
 
-import android.support.annotation.IdRes;
+import androidx.annotation.IdRes;
 
 import com.marcelosmith77.android.easydrawer.fragment.IHomeFragment;
 
