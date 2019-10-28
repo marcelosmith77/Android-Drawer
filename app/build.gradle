@@ -8,8 +8,8 @@ android {
         applicationId "com.marcelosmith77.android.easydrawer"
         minSdkVersion setup.minSdkVersion
         targetSdkVersion setup.targetSdkVersion
-        versionCode 150010200
-        versionName "1.02.00"
+        versionCode 150010201
+        versionName "1.02.01"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

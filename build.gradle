@@ -3,12 +3,13 @@
 buildscript {
 
     ext {
-        setup = [compileSdk: 28,
+        setup = [compileSdk: 29,
                  buildTools: "28.0.3",
                  minSdkVersion    : 15,
-                 targetSdkVersion : 28]
+                 targetSdkVersion : 29]
 
-        versions = [supportLib: "27.1.1"]
+        versions = [supportLib: "1.1.0",
+                    materialLib: "1.0.0"]
     }
 
     repositories {
