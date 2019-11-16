@@ -105,39 +105,38 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
         this.bottomNavigationView = parts.bottomNavigationView;
         this.fragmentContainerId = parts.fragmentContainerId;
 
-        // Setup Navigation item listener (START SIDE)
-        if (parts.leftNavigationView != null) {
-            parts.leftNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    boolean result = onLeftNavigationItemSelected(item);
+        if (drawerLayout != null) {
 
-                    // item selected, close drawer
-                    if (result) {
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                    }
-
-                    return result; // item selected?
-                }
-            });
-        }
-
-        // Setup Navigation item listener (END SIDE)
-        if (parts.rightNavigationViews != null) {
-            for (NavigationView rightView : parts.rightNavigationViews) {
-                rightView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            // Setup Navigation item listener (START SIDE)
+            if (parts.leftNavigationView != null) {
+                parts.leftNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        boolean result = onLeftNavigationItemSelected(item);
 
-                        //Tells that right navigation item was selected
-                        return onRightNavigationItemSelected(item);
+                        // item selected, close drawer
+                        if (result) {
+                            drawerLayout.closeDrawer(GravityCompat.START);
+                        }
+
+                        return result; // item selected?
                     }
                 });
             }
-        }
 
+            // Setup Navigation item listener (END SIDE)
+            if (parts.rightNavigationViews != null) {
+                for (NavigationView rightView : parts.rightNavigationViews) {
+                    rightView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                        @Override
+                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        if (drawerLayout != null) {
+                            //Tells that right navigation item was selected
+                            return onRightNavigationItemSelected(item);
+                        }
+                    });
+                }
+            }
 
             drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, parts.toolbar, parts.openDrawerContentDescRes, parts.closeDrawerContentDescRes) {
                 @Override
@@ -188,13 +187,15 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
                     if (backStackCount > 0) {
                         onBackPressed();
                     } else {
-                        if (drawerToggle.isDrawerIndicatorEnabled()) {
-                            int drawerLockMode = drawerLayout.getDrawerLockMode(GravityCompat.START);
+                        if (drawerLayout != null) {
+                            if (drawerToggle.isDrawerIndicatorEnabled()) {
+                                int drawerLockMode = drawerLayout.getDrawerLockMode(GravityCompat.START);
 
-                            if (drawerLayout.isDrawerVisible(GravityCompat.START) && (drawerLockMode != DrawerLayout.LOCK_MODE_LOCKED_OPEN)) {
-                                drawerLayout.closeDrawer(GravityCompat.START);
-                            } else if (drawerLockMode != DrawerLayout.LOCK_MODE_LOCKED_CLOSED) {
-                                drawerLayout.openDrawer(GravityCompat.START);
+                                if (drawerLayout.isDrawerVisible(GravityCompat.START) && (drawerLockMode != DrawerLayout.LOCK_MODE_LOCKED_OPEN)) {
+                                    drawerLayout.closeDrawer(GravityCompat.START);
+                                } else if (drawerLockMode != DrawerLayout.LOCK_MODE_LOCKED_CLOSED) {
+                                    drawerLayout.openDrawer(GravityCompat.START);
+                                }
                             }
                         }
                     }
@@ -276,11 +277,11 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
     public void onBackPressed() {
 
         // drawer opened ? close it!
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
 
             // drawer opened ? close it!
-        } else if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+        } else if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.END)) {
             drawerLayout.closeDrawer(GravityCompat.END);
         } else {
 
@@ -322,11 +323,13 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
                 }
 
                 // Current fragment does have drawer? Unlock It, allowing END SIDE
-                if (getCurrentFragment() instanceof IFragmentRightDrawerHandler) {
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.END);
-                } else {
-                    // Lock It, blocking END SIDE
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
+                if (drawerLayout != null) {
+                    if (getCurrentFragment() instanceof IFragmentRightDrawerHandler) {
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.END);
+                    } else {
+                        // Lock It, blocking END SIDE
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
+                    }
                 }
 
             } else {
@@ -576,8 +579,11 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
             // Home fragment must not pushed to stack
             if (!isHomeFragment && addToStack) {
                 ft.addToBackStack(name);
-                getSupportActionBar().setDisplayShowHomeEnabled(false);
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+                if (drawerLayout != null) {
+                    getSupportActionBar().setDisplayShowHomeEnabled(false);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                }
             }
 
             ft.commit();
@@ -635,14 +641,17 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
      * Show hamburguer icon
      */
     private void resetDrawerIndicators() {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        }
 
-        if (drawerToggle != null) {
-            drawerToggle.setDrawerIndicatorEnabled(true);
-            drawerToggle.syncState();
+        if (drawerLayout != null) {
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            }
+
+            if (drawerToggle != null) {
+                drawerToggle.setDrawerIndicatorEnabled(true);
+                drawerToggle.syncState();
+            }
         }
     }
 
@@ -650,9 +659,11 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
 
         if (getHomeMenuId() != -1) {
 
-            // set home menu item selected inside drawer
-            if (leftNavigationView != null) {
-                leftNavigationView.setCheckedItem(getHomeMenuId());
+            if (drawerLayout != null) {
+                // set home menu item selected inside drawer
+                if (leftNavigationView != null) {
+                    leftNavigationView.setCheckedItem(getHomeMenuId());
+                }
             }
         }
     }
@@ -690,7 +701,9 @@ public abstract class AbstractBaseDrawerActivity extends AppCompatActivity imple
     public void closeLeftDrawer(@IdRes int defaultCheckedItem) {
         closeLeftDrawer();
 
-        if (this.leftNavigationView != null)
-            this.leftNavigationView.setCheckedItem(defaultCheckedItem);
+        if (drawerLayout != null) {
+            if (this.leftNavigationView != null)
+                this.leftNavigationView.setCheckedItem(defaultCheckedItem);
+        }
     }
 }

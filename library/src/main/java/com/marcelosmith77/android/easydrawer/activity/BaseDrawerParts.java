@@ -19,9 +19,21 @@ public class BaseDrawerParts {
     int touchAgaingDescRes;
     BottomNavigationView bottomNavigationView;
 
+    public BaseDrawerParts(Toolbar toolbar, @IdRes int fragmentContainerId, @StringRes int touchAgaingDescRes) {
+        this(toolbar, fragmentContainerId, touchAgaingDescRes, null);
+    }
+
+    public BaseDrawerParts(Toolbar toolbar, @IdRes int fragmentContainerId, @StringRes int touchAgaingDescRes, BottomNavigationView bottomNavigationView) {
+        this.toolbar = toolbar;
+        this.fragmentContainerId = fragmentContainerId;
+        this.touchAgaingDescRes = touchAgaingDescRes;
+        this.bottomNavigationView = bottomNavigationView;
+    }
+
     public BaseDrawerParts(Toolbar toolbar, DrawerLayout drawerLayout, NavigationView leftNavigationView, NavigationView[] rightNavigationViews, @IdRes int fragmentContainerId, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes, @StringRes int touchAgaingDescRes) {
         this(toolbar, drawerLayout, leftNavigationView, rightNavigationViews, fragmentContainerId, openDrawerContentDescRes, closeDrawerContentDescRes, touchAgaingDescRes, null);
     }
+
     public BaseDrawerParts(Toolbar toolbar, DrawerLayout drawerLayout, NavigationView leftNavigationView, NavigationView[] rightNavigationViews, @IdRes int fragmentContainerId, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes, @StringRes int touchAgaingDescRes, BottomNavigationView bottomNavigationView) {
         this.toolbar = toolbar;
         this.drawerLayout = drawerLayout;
